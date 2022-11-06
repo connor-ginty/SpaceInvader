@@ -46,6 +46,9 @@ enemyX = []
 enemyY = []
 enemyX_change = []
 enemyY_change =[]
+speed_increase_left = [None] * len(enemyX_change)
+speed_increase_right =[None] * len(enemyX_change)
+
 
 num_of_enemies = 6
 
@@ -57,16 +60,12 @@ for i in range(num_of_enemies):
     enemyY_change.append(40)
 
 # Score
+global score_value
 score_value = 0
 font = pygame.font.Font('freesansbold.ttf', 32)
 textX = 10
 textY = 10
-
-def difficulty_scaling(score_value):
-    if score_value % 5 == 0:
-        enemyX_change += 0.1
         
-
 def player(x, y):
     screen.blit(playerImg, (x, y))
     # blit = draw
@@ -83,7 +82,7 @@ def fire_bullet(x,y):
 def isCollision(enemyX, enemyY, bulletX, bulletY):
     # Formula for caluclating distance between coordinates
     distance = math.sqrt(math.pow((enemyX - bulletX), 2) + math.pow((enemyY - bulletY), 2))
-    if distance < 27: # Hit box
+    if distance < 33: # Hit box, bigger number means easier to hit
         return True
     else:
         return False
@@ -91,6 +90,19 @@ def isCollision(enemyX, enemyY, bulletX, bulletY):
 def show_score(x,y):
     score = font.render("Score: " + str(score_value), True, (255, 255, 0))
     screen.blit(score, (x,y))
+
+def hits_threshold_right(score):
+    threshold_value_right = 0
+    if score % 2 == 0 and enemyX[i] <= 0:
+        threshold_value_right += 400
+        return threshold_value_right
+
+def hits_threshold_left(score):
+    threshold_value_left = 0
+    if score % 2 == 0 and enemyX[i] >= 736:
+        threshold_value_left -= 400
+        return threshold_value_left
+
 
 # Infinite Game Loop
 running = True
@@ -134,14 +146,23 @@ while (running):
     # Enemy movement
     for i in range(num_of_enemies):
         enemyX[i] += enemyX_change[i]
-        if enemyX[i] <= 0:
+        if enemyX[i] <= 0: # moving to the right
             enemyX[i] = 0
             enemyX_change[i] = 0.3
             enemyY[i] += enemyY_change[i]
-        elif enemyX[i] >= 736:
+            #Difficulty scaling
+            threshold_right  = 0.1
+            if score_value % 2 == 0:
+                enemyX_change[i] += threshold_right[i]
+
+        elif enemyX[i] >= 736: # moving to the left
             enemyX[i] = 736
             enemyX_change[i] = -0.3
             enemyY[i] += enemyY_change[i]
+            #Difficulty scaling
+            threshold_left[i] = -0.1
+            if score_value % 2 == 0:
+                enemyX_change[i] += threshold_left[i]
 
         # Collision
         collision = isCollision(enemyX[i], enemyY[i], bulletX, bulletY)
@@ -168,4 +189,5 @@ while (running):
 
     show_score(textX, textY)
     player(playerX, playerY)  # Player starting position
+    # scale_difficulty()
     pygame.display.update()
