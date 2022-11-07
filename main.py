@@ -1,6 +1,5 @@
-
 import pygame
-from pygame import mixer
+from pygame import CONTROLLER_AXIS_LEFTX, mixer
 import random
 import math
 
@@ -45,9 +44,7 @@ enemyImg = []
 enemyX = []
 enemyY = []
 enemyX_change = []
-enemyY_change =[]
-speed_increase_left = [None] * len(enemyX_change)
-speed_increase_right =[None] * len(enemyX_change)
+enemyY_change = []
 
 
 num_of_enemies = 6
@@ -58,6 +55,7 @@ for i in range(num_of_enemies):
     enemyY.append(random.randint(50,150))
     enemyX_change.append(0.3)
     enemyY_change.append(40)
+
 
 # Score
 global score_value
@@ -90,18 +88,6 @@ def isCollision(enemyX, enemyY, bulletX, bulletY):
 def show_score(x,y):
     score = font.render("Score: " + str(score_value), True, (255, 255, 0))
     screen.blit(score, (x,y))
-
-def hits_threshold_right(score):
-    threshold_value_right = 0
-    if score % 2 == 0 and enemyX[i] <= 0:
-        threshold_value_right += 400
-        return threshold_value_right
-
-def hits_threshold_left(score):
-    threshold_value_left = 0
-    if score % 2 == 0 and enemyX[i] >= 736:
-        threshold_value_left -= 400
-        return threshold_value_left
 
 
 # Infinite Game Loop
@@ -151,18 +137,29 @@ while (running):
             enemyX_change[i] = 0.3
             enemyY[i] += enemyY_change[i]
             #Difficulty scaling
-            threshold_right  = 0.1
-            if score_value % 2 == 0:
-                enemyX_change[i] += threshold_right[i]
+            if score_value >= 10:
+                enemyX_change[i] += 0.1
+                if score_value >= 20:
+                    enemyX_change[i] += 0.1
+                    if score_value >= 30:
+                        enemyX_change[i] += 0.1
+                        if score_value >= 40:
+                            enemyX_change[i] += 0.1
 
         elif enemyX[i] >= 736: # moving to the left
             enemyX[i] = 736
             enemyX_change[i] = -0.3
             enemyY[i] += enemyY_change[i]
             #Difficulty scaling
-            threshold_left[i] = -0.1
-            if score_value % 2 == 0:
-                enemyX_change[i] += threshold_left[i]
+            if score_value >= 10:
+                enemyX_change[i] -= 0.1
+                if score_value >= 20:
+                    enemyX_change[i] -= 0.1
+                    if score_value >= 30:
+                        enemyX_change[i] -= 0.1
+                        if score_value >= 40:
+                            enemyX_change[i] -= 0.1
+
 
         # Collision
         collision = isCollision(enemyX[i], enemyY[i], bulletX, bulletY)
