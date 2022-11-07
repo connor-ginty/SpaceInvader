@@ -1,5 +1,5 @@
 import pygame
-from pygame import CONTROLLER_AXIS_LEFTX, mixer
+from pygame import mixer
 import random
 import math
 
@@ -46,7 +46,7 @@ enemyY = []
 enemyX_change = []
 enemyY_change = []
 
-
+global num_of_enemies
 num_of_enemies = 6
 
 for i in range(num_of_enemies):
@@ -55,7 +55,6 @@ for i in range(num_of_enemies):
     enemyY.append(random.randint(50,150))
     enemyX_change.append(0.3)
     enemyY_change.append(40)
-
 
 # Score
 global score_value
@@ -68,7 +67,6 @@ def player(x, y):
     screen.blit(playerImg, (x, y))
     # blit = draw
 
-
 def enemy(x, y, i):
     screen.blit(enemyImg[i], (x, y))
 
@@ -80,15 +78,32 @@ def fire_bullet(x,y):
 def isCollision(enemyX, enemyY, bulletX, bulletY):
     # Formula for caluclating distance between coordinates
     distance = math.sqrt(math.pow((enemyX - bulletX), 2) + math.pow((enemyY - bulletY), 2))
-    if distance < 33: # Hit box, bigger number means easier to hit
+    if distance < 36: # Hit box, bigger number means easier to hit
         return True
     else:
         return False
+
+# Starting Menu
+start_title_font = pygame.font.Font('freesansbold.ttf', 64)
+start_game_font = pygame.font.Font('freesansbold.ttf', 32)
+
+#Game Over text
+over_font = pygame.font.Font('freesansbold.ttf', 64)
 
 def show_score(x,y):
     score = font.render("Score: " + str(score_value), True, (255, 255, 0))
     screen.blit(score, (x,y))
 
+def game_over_text():
+        over_text = over_font.render("GAME OVER", True, (255, 255, 0))
+        screen.blit(over_text, (200, 250))
+
+def start_menu_text():
+        start_title = start_title_font.render("Space Invaders", True, (255, 255, 0))
+        screen.blit(start_title, (400, 300))
+
+        start_game = start_game_font.render("Press Space to Start", True, (255, 255, 0))
+        screen.blit(start_game, (300, 350))
 
 # Infinite Game Loop
 running = True
@@ -121,8 +136,9 @@ while (running):
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 playerX_change = 0
         
-
+    
     playerX += playerX_change
+
     # Creating Borders
     if playerX <= 0:
         playerX = 0
@@ -131,34 +147,66 @@ while (running):
 
     # Enemy movement
     for i in range(num_of_enemies):
+    
+    #Game Over
+        if enemyY[i] > 440:
+            for j in range(num_of_enemies):
+                enemyY[j] = 2000 #removing enemies from sight on game screen
+            game_over_text()
+            break
+
         enemyX[i] += enemyX_change[i]
         if enemyX[i] <= 0: # moving to the right
             enemyX[i] = 0
             enemyX_change[i] = 0.3
             enemyY[i] += enemyY_change[i]
-            #Difficulty scaling
+            #Difficulty scaling - ugly but works
             if score_value >= 10:
-                enemyX_change[i] += 0.1
+                enemyX_change[i] += 0.05
                 if score_value >= 20:
-                    enemyX_change[i] += 0.1
+                    enemyX_change[i] += 0.05
                     if score_value >= 30:
-                        enemyX_change[i] += 0.1
+                        enemyX_change[i] += 0.05
                         if score_value >= 40:
-                            enemyX_change[i] += 0.1
+                            enemyX_change[i] += 0.05
+                            if score_value >= 50:
+                                enemyX_change[i] += 0.05
+                                if score_value >= 60:
+                                    enemyX_change[i] += 0.05
+                                    if score_value >= 70:
+                                        enemyX_change[i] += 0.05
+                                        if score_value >= 80:
+                                            enemyX_change[i] += 0.05
+                                            if score_value >= 70:
+                                                enemyX_change[i] += 0.05
+                                                if score_value >= 80:
+                                                    enemyX_change[i] += 0.05
 
         elif enemyX[i] >= 736: # moving to the left
             enemyX[i] = 736
             enemyX_change[i] = -0.3
             enemyY[i] += enemyY_change[i]
-            #Difficulty scaling
+            #Difficulty scaling - ugly but works
             if score_value >= 10:
-                enemyX_change[i] -= 0.1
+                enemyX_change[i] -= 0.05
                 if score_value >= 20:
-                    enemyX_change[i] -= 0.1
+                    enemyX_change[i] -= 0.05
                     if score_value >= 30:
-                        enemyX_change[i] -= 0.1
+                        enemyX_change[i] -= 0.05
                         if score_value >= 40:
-                            enemyX_change[i] -= 0.1
+                            enemyX_change[i] -= 0.05
+                            if score_value >= 50:
+                                enemyX_change[i] -= 0.05
+                                if score_value >= 60:
+                                    enemyX_change[i] -= 0.05
+                                    if score_value >= 70:
+                                        enemyX_change[i] -= 0.05
+                                        if score_value >= 80:
+                                            enemyX_change[i] -= 0.05
+                                            if score_value >= 90:
+                                                enemyX_change[i] -= 0.05
+                                            if score_value >= 100:
+                                                enemyX_change[i] -= 0.05
 
 
         # Collision
